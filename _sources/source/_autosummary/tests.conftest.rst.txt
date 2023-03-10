@@ -1,0 +1,42 @@
+..
+    Credit to https://github.com/JamesALeedham/Sphinx-Autosummary-Recursion for the custom templates.
+..
+tests.conftest
+==============
+
+.. automodule:: tests.conftest
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      basic_2_agent_loop
+      corporate_network
+      create_yawning_titan_run
+      default_game_mode
+      default_network
+      game_mode_db
+      legacy_default_game_mode_dict
+      network_db
+      not_raises
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
