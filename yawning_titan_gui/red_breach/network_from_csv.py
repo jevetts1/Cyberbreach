@@ -96,21 +96,3 @@ def generate_network(csv_json_str:str,fetch_vulnerabilities:bool = False,generat
             nodes[node].y_pos = float(nodes_csv[node][2])
 
     return net
-
-def generate1_network(csv_json_str:str,fetch_vulnerabilities:bool = False,generate_node_positions:bool = False):
-    csv_str = json.loads(csv_json_str)[0]
-    csv_lines = csv_str.split("\n")
-
-    nodes = {}
-    nodes_csv = {}
-
-    num_high_value_targets = 0
-
-    for line in csv_lines[1:]:
-        split_line = line.replace("\n","").split(",")
-        nodeID = split_line[0]
-        nodes_csv[nodeID] = split_line
-
-        node_vulnerability = random.random()   
-
-    return Network()
