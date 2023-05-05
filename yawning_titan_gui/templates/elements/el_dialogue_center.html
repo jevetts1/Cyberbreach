@@ -6,11 +6,19 @@
     <input id="#dialogue-center-input" type="text" placeholder="{{dialogue_info.input_prompt}}" data-cy="new-item-name-input" required>
     {% endif %}
     <div class="el-row">
+    {% if dialogue_info.show_file_input %}
+        <input type="file" id="dialogue-file-input" name="file">
+    {% endif %}
+    </div>
+    <br>
+    <div class="el-row">
         <button class="btn cancel">Cancel</button>
         <div>
+            
             {% for action_name in dialogue_info.actions %}
                 <button type="button" class="btn btn-primary submit {{action_name|to_id}}">{{action_name}}</button>
             {% endfor %}
+            
         </div>
     </div>
     <button type="submit" class="hidden"></button>

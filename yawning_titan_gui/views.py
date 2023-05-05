@@ -1,6 +1,7 @@
 import json
 import traceback
 from io import StringIO
+import logging
 
 from django.http import Http404, HttpRequest, JsonResponse
 from django.shortcuts import redirect, render
@@ -29,6 +30,7 @@ from yawning_titan_gui.helpers import (
     RunManager,
     get_toolbar,
 )
+from yawning_titan_gui.red_breach.network_from_csv import generate_network
 
 default_sidebar = {
     "Documentation": ["Getting started", "Tutorials", "How to configure", "Code"],
@@ -251,6 +253,14 @@ class NetworksView(View):
                 "actions": ["Create network"],
                 "input_prompt": "Network name...",
             },
+            {
+                "id": "upload-dialogue",
+                "header": "Upload network from CSV",
+                "message": "Enter a name for your network",
+                "actions": ["Upload network"],
+                "input_prompt": "Network name...",
+                "show_file_input": True,
+            },
         ]
         return render(
             request,
@@ -271,6 +281,7 @@ class NetworksView(View):
             the html page. A `request` object will always be delivered when a page
             object is accessed.
         """
+
         search_form = NetworkSearchForm(request.POST)
         if search_form.is_valid():
             if search_form.filters:
@@ -552,6 +563,17 @@ def db_manager(request: HttpRequest) -> JsonResponse:
                 "game mode config",
                 kwargs={"game_mode_id": game_mode.doc_metadata.uuid},
             )
+        
+        def upload_network():
+            file_contents = request.POST.get("file_contents")
+            network_config = generate_network(file_contents)
+            print(network_config)
+            network = NetworkManager.db.insert(network=network_config, name=item_name)
+
+            return reverse(
+                "network editor",
+                kwargs={"network_id": network.doc_metadata.uuid},
+            )
 
         def create_network():
             network = NetworkManager.db.insert(network=Network(), name=item_name)
@@ -606,6 +628,7 @@ def db_manager(request: HttpRequest) -> JsonResponse:
                 "delete": delete_network,
                 "create from": create_network_from,
                 "template": create_template_network,
+                "upload": upload_network,
             },
         }
         try:

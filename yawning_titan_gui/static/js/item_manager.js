@@ -19,6 +19,11 @@ $(document).ready(function(){
         toggle_dialogue("#create-dialogue");
     });
 
+    // added for red breach
+    $("#upload").click(function(){
+        toggle_dialogue("#upload-dialogue");
+    });
+
     $("#delete-all").click(function(){
         $("#delete-dialogue .header").text(`Delete all (${$('.form-check-input:checkbox:checked').length}) items`);
         selected_item_names = $(".list-item:has(.form-check-input:checkbox:checked)").map(function(){return $(this).attr("data-item-name")}).get();
@@ -56,6 +61,29 @@ $(document).ready(function(){
         }
     });
 
+    // added for red breach
+    $("#upload-dialogue .submit").click(function(){
+        let input = $(this).closest(".dialogue-center").find("input").first(),
+            item_names = [input.val()];
+
+        var file_input = document.getElementById("dialogue-file-input");
+        var file = file_input.files[0];
+
+        $(this).closest(".dialogue-center").find("button[type='submit']").click();
+        
+        if(input.val()){
+            if($(this).hasClass("upload-network")) {
+                var reader = new FileReader();
+                reader.readAsText(file);
+
+                reader.onload = function(e) {
+                    let file_contents = e.target.result;
+                    send_files("upload",file_contents,item_names,[],{});
+                }
+            }
+        }
+    });
+      
     $("#create-dialogue").submit(false);
 
     $("#create-from-dialogue .submit").click(function(){
@@ -171,6 +199,26 @@ function manage_items(operation,item_names=[],item_ids=[],additional_data={}){
         url: DB_MANAGER_URL,
         dataType : "json",
         data: Object.assign({},{"operation":operation,"item_type":ITEM_TYPE,"item_ids":item_ids,"item_names":item_names},additional_data),
+        success: function(response){
+            if (response.load == "reload"){
+                location.reload()
+            }else{
+                location.href = response.load
+            }
+        },
+        error: function(response){
+            console.log(response)
+        }
+    });
+}
+
+// function for uploading files
+function send_files(operation,file_contents,item_names=[],item_ids=[],additional_data={}){
+    $.ajax({
+        type: "POST",
+        url: DB_MANAGER_URL,
+        dataType : "json",
+        data: Object.assign({},{"operation":operation,"item_type":ITEM_TYPE,"item_ids":item_ids,"item_names":item_names,"file_contents":JSON.stringify(file_contents)},additional_data),
         success: function(response){
             if (response.load == "reload"){
                 location.reload()
