@@ -30,7 +30,7 @@ from yawning_titan_gui.helpers import (
     RunManager,
     get_toolbar,
 )
-from yawning_titan_gui.red_breach.network_from_csv import generate_network
+from yawning_titan.red_breach.network_from_csv import generate_network
 
 default_sidebar = {
     "Documentation": ["Getting started", "Tutorials", "How to configure", "Code"],

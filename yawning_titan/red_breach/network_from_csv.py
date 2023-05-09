@@ -9,7 +9,7 @@ import json
 
 from yawning_titan.networks.node import Node
 from yawning_titan.networks.network import Network
-from yawning_titan_gui.red_breach.retrieve_cpe_from_azure import retrieve_csv_vulnerabilities
+from yawning_titan.red_breach.retrieve_cpe_from_azure import retrieve_csv_vulnerabilities
 
 def normalise(min_val:float,max_val:float,val:float): #normalises to a val between 0 and 1
     val -= min_val

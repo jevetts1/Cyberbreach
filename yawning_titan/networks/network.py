@@ -173,6 +173,15 @@ class Network(nx.Graph):
         if self._doc_metadata is None:
             self._doc_metadata = DocMetadata()
 
+        """Cyberbreach graph attribute additions"""
+        self.shortest_path_to_high_value = None
+        self.longest_path_to_high_value = None
+        self.average_path_to_high_value = None
+
+        self.min_node_degree = None
+        self.max_node_degree = None
+        self.network_degree = None
+
     @property
     def high_value_nodes(self) -> List[Node]:
         """A list of the high value nodes in the network."""
@@ -703,6 +712,102 @@ class Network(nx.Graph):
     def to_adj_matrix_and_positions(self) -> Tuple[numpy.array, Dict[str, List[float]]]:
         """Represent the network by its adjacency matrix and a dictionary of node names to positions."""
         return nx.to_numpy_array(self), {n.name: n.node_position for n in self.nodes}
+    
+
+    """Added for Cyberbreach"""
+
+    """Finding shortest paths from entry node using Dijkstra's algorithm."""
+
+    def check_lonely_node(self,p):
+        if p:
+            return p
+        
+        else:
+            return math.inf
+    
+    def find_shortest_paths(self) -> Dict[Node,int]:
+        distances = []
+
+        for entry_node in self.entry_nodes:
+            current_min_node_distances = {entry_node:0}
+            current_min_node_distances = self.explore_node(entry_node,current_min_node_distances)
+
+            distances.append(current_min_node_distances)
+
+        min_node_distances = {node:min([self.check_lonely_node(paths.get(node)) for paths in distances]) for node in self.get_nodes()}
+
+        return min_node_distances
+
+    def explore_node(self,start_node:Node,min_node_distances:dict) -> Dict[Node,int]:
+        for neighbour in self.neighbors(start_node):
+            if neighbour not in min_node_distances.keys():
+                min_node_distances[neighbour] = min_node_distances[start_node] + 1
+                min_node_distances = self.explore_node(neighbour,min_node_distances)
+
+        return min_node_distances
+    
+    def find_paths_to_high_value(self) -> Tuple[int,int,int]:
+        """
+        Returns a tuple of 3 elements: 
+            shortest path to a high value node, longest path to a high value node, and average path to a high value node.
+        """
+        shortest_paths = self.find_shortest_paths()
+        shortest_paths_to_high_value = dict(filter(lambda x:(x[0].high_value_node == True),shortest_paths.items()))
+
+        shortest_path = math.inf
+        longest_path = 0
+        average_path = 0.0
+
+        for node in shortest_paths_to_high_value.keys():
+            current_path = shortest_paths_to_high_value[node]
+
+            if current_path < shortest_path:
+                shortest_path = current_path
+
+            if current_path > longest_path:
+                longest_path = current_path
+
+            average_path += current_path
+        
+        average_path /= len(shortest_paths_to_high_value.keys())
+
+        return shortest_path,longest_path,average_path
+    
+    """Finding degree of the nodes and the network"""
+
+    def find_degrees(self) -> Tuple[int,int,int]:
+        min_degree = math.inf
+        max_degree = 0
+        degree = 0
+
+        for node in self.get_nodes(as_list = True):
+            node_degree = len(list(self.neighbors(node)))
+
+            min_degree = min(min_degree,node_degree)
+            max_degree = max(max_degree,node_degree)
+
+            degree += node_degree
+
+        degree /= len(self.get_nodes(as_list = True))
+
+        return min_degree,max_degree,degree
+    
+    def generate_network_graph_attributes(self) -> str:
+        shortest_path,longest_path,average_path = self.find_paths_to_high_value()
+        min_degree,max_degree,degree = self.find_degrees()
+
+        self.shortest_path_to_high_value = shortest_path
+        self.longest_path_to_high_value = longest_path
+        self.average_path_to_high_value = average_path
+
+        return_message = f"Shortest path to a high value node: {shortest_path}\n"\
+                       + f"Longest path to a high value node:  {longest_path}\n"\
+                       + f"Average path to a high value node:  {average_path}\n"\
+                       + f"Minimum degree of any node:         {min_degree}\n"\
+                       + f"Maximum degree of any node:         {max_degree}\n"\
+                       + f"Degree of network:                  {degree}\n"\
+
+        return return_message
 
     @classmethod
     def create(cls, network_dict: dict) -> Network:
