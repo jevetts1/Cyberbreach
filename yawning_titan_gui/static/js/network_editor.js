@@ -50,13 +50,14 @@ function update_network(form_element,operation){
 function toggleToolbar(iconEl) {
     // remove active from all icons
     $(".network-sidenav-navigation-btn").removeClass("active");
-
+    
     // add active class to icon
     $(iconEl).addClass("active")
 
     // hide all sidebars
     $("#network-details").hide();
     $("#node-list").hide();
+    $("#graph-analysis").hide();
 
     // open the relevant item
     $($(iconEl).data("item")).css('display', 'flex');

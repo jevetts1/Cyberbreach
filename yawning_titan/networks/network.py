@@ -800,6 +800,10 @@ class Network(nx.Graph):
         self.longest_path_to_high_value = longest_path
         self.average_path_to_high_value = average_path
 
+        self.min_node_degree = min_degree
+        self.max_node_degree = max_degree
+        self.network_degree = degree
+
         return_message = f"Shortest path to a high value node: {shortest_path}\n"\
                        + f"Longest path to a high value node:  {longest_path}\n"\
                        + f"Average path to a high value node:  {average_path}\n"\

@@ -1,0 +1,42 @@
+{% load tags %}
+{% load static %}
+<link href="{% static '.network_editor.html' %}" rel="stylesheet">
+<div class="path-analysis-tab-container">
+    <table>
+        <tr>
+            <td>Shortest path from an entry node to a high value node</td><td>{{graph_attributes.shortest_path_to_high_value}}</td>
+        </tr>
+            <td>Longest path from an entry node to a high value node</td><td>{{graph_attributes.longest_path_to_high_value}}</td>
+        </tr>   
+            <td>Average path length from entry nodes to high value nodes</td><td>{{graph_attributes.average_path_to_high_value}}</td>
+        </tr>
+            <td>Lowest connectivity of a node</td><td>{{graph_attributes.min_node_degree}}</td>
+        </tr>
+            <td>Highest connectivity of a node</td><td>{{graph_attributes.max_node_degree}}</td>
+        </tr>
+            <td>Degree of network</td><td>{{graph_attributes.network_degree}}</td>
+        </tr>
+    </table>
+  <div id="graph-analysis-container" class="graph-analysis-container"></div>
+</div>
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        color: white; /* Set text color to white */
+    }
+    tr:nth-child(even) {
+        background-color: rgba(0, 0, 0, 0); /* Invisible row */
+    }
+    tr:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.274); /* Slightly lighter row */
+    }
+    th {
+        background-color: #333;
+    }
+</style>

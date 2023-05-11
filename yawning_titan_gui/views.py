@@ -392,6 +392,22 @@ class NodeEditor(View):
             object is accessed.
         """
         network_form = NetworkFormManager.get_or_create_form(network_id)
+        
+        # Cyber breach graph analysis attributes
+        
+        network_form.network.generate_network_graph_attributes()
+
+        print(network_form.network.shortest_path_to_high_value)
+
+        graph_attributes_dict = {
+            "shortest_path_to_high_value":network_form.network.shortest_path_to_high_value,
+            "longest_path_to_high_value":network_form.network.longest_path_to_high_value,
+            "average_path_to_high_value":round(network_form.network.average_path_to_high_value,2),
+            "min_node_degree":network_form.network.min_node_degree,
+            "max_node_degree":network_form.network.max_node_degree,
+            "network_degree":round(network_form.network.network_degree,2),
+        }
+
         return render(
             request,
             "network_editor.html",
@@ -404,6 +420,7 @@ class NodeEditor(View):
                 "network_json": json.dumps(
                     network_form.network.to_dict(json_serializable=True)
                 ),
+                "graph_attributes": graph_attributes_dict,
             },
         )
 
@@ -567,7 +584,6 @@ def db_manager(request: HttpRequest) -> JsonResponse:
         def upload_network():
             file_contents = request.POST.get("file_contents")
             network_config = generate_network(file_contents)
-            print(network_config)
             network = NetworkManager.db.insert(network=network_config, name=item_name)
 
             return reverse(

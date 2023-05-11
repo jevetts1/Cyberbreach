@@ -27,6 +27,10 @@
       data-toggle="tooltip" data-placement="bottom" title="Node List" data-cy="node-list-nav-button">
       <i class="bi bi-three-dots-vertical"></i>
     </button>
+    <button class="btn network-sidenav-navigation-btn" id="graph-analysis-nav-button" data-item="#graph-analysis"
+      data-toggle="tooltip" data-placement="bottom" title="Graph Analysis" data-cy="graph-analysis-nav-button">
+      <i class="bi bi-file-bar-graph-fill"></i>
+    </button>
   </div>
   <div class="tab-content">
     <div id="network-details" class="tab-container">
@@ -51,6 +55,16 @@
       </div>
       <div class="toolbar-content">
         {% include 'elements/el_node_list.html' %}
+      </div>
+    </div>
+
+    <div id="graph-analysis" class="tab-container">
+      <div class="toolbar-tab-title">
+        <h3>Graph Analysis</h3>
+        <p>View attributes of the graph</p>
+      </div>
+      <div class="toolbar-content">
+        {% include 'elements/el_graph_attributes_list.html' %}
       </div>
     </div>
   </div>
@@ -111,7 +125,8 @@
   }
 
   #network-details,
-  #node-list {
+  #node-list,
+  #graph-analysis {
     padding: var(--increment);
     flex: 1;
     z-index: 999;
